@@ -1,0 +1,25 @@
+# =============================================================================
+# Mindspace — Voice API (XGBoost, port 9100)
+# =============================================================================
+# Usage:
+#   docker compose up --build     # build and start
+#   docker compose down           # stop and remove container
+#
+# Requires a .env file in this folder with: API_KEY=your-secret-key
+# =============================================================================
+
+services:
+  voice-api:
+    build: .
+    container_name: mindspace-voice-api
+    ports:
+      - "9100:9100"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9100/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
