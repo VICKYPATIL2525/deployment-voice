@@ -1,25 +1,20 @@
-# =============================================================================
-# Mindspace — Voice API (XGBoost, port 9100)
-# =============================================================================
-# Build context: deployment-voice/
-# docker build -t mindspace-voice-api .
-# docker run --env-file .env -p 9100:9100 mindspace-voice-api
-# =============================================================================
-
-FROM python:3.11-slim
+FROM python:3.11
 
 WORKDIR /app
 
-# Install dependencies first (layer-cached unless requirements change)
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the API source and all required artifacts
-COPY api_voice_to_sentiment.py .
+# Copy application files
+COPY api_speech_to_text.py .
 COPY pipeline_output/ pipeline_output/
-COPY demo-api-input-data-sample/ demo-api-input-data-sample/
 
-# API_KEY is injected at runtime via --env-file or -e, not baked into the image
 EXPOSE 9100
 
-CMD ["uvicorn", "api_voice_to_sentiment:app", "--host", "0.0.0.0", "--port", "9100"]
+CMD ["uvicorn", "api_speech_to_text:app", "--host", "0.0.0.0", "--port", "9100"]
