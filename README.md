@@ -5,10 +5,15 @@ FastAPI inference service for the Mindspace voice-based mental health classifier
 ## What This Repo Contains
 
 - `api_voice_to_sentiment.py`: FastAPI app and inference pipeline.
+- `call_api.py`: Python client script to test all API endpoints.
 - `pipeline_output/XGBoost_27032026_152209/`: trained model and preprocessing artifacts.
 - `demo-api-input-data-sample/voice_normal_sample_1.json`: sample request payload.
+- `.env`: API key configuration (not committed to git).
+- `.env.example`: template for `.env` — copy and set your key.
+- `.gitignore`: prevents `.env` from being committed.
 - `Dockerfile`: container image definition.
 - `docker-compose.yml`: local container orchestration.
+- `requirements.txt`: pinned Python dependencies.
 
 ## Model Summary
 
@@ -181,9 +186,32 @@ curl -X POST http://localhost:9100/predict ^
   --data @demo-api-input-data-sample/voice_normal_sample_1.json
 ```
 
+## Testing With the Python Client
+
+`call_api.py` is a standalone script that calls all 4 endpoints and prints the results. It reads the API key from `.env` automatically.
+
+```powershell
+# Make sure the server is running first
+uvicorn api_voice_to_sentiment:app --port 9100 --reload
+
+# In another terminal, run the client
+python call_api.py
+```
+
+Expected output:
+
+```
+1. GET /  (Service Info)           → 200
+2. GET /health  (Health Check)     → 200, artifacts_loaded=True
+3. GET /model/info  (Model Meta)   → 200, XGBoost, 1351 features
+4. POST /predict  (Prediction)     → 200, prediction=normal, confidence=0.9922
+```
+
 ## Notes For Developers
 
 - Artifacts are loaded once at startup through the FastAPI lifespan hook.
 - Preprocessing includes saved outlier transforms and a saved scaler before inference.
 - CORS is currently open to all origins and should be tightened for production deployment.
 - The sample payload is also injected into the Swagger schema when available.
+- All endpoints require the `X-API-Key` header — requests without it receive `403 Forbidden`.
+- The API key is loaded from the `.env` file via `python-dotenv` at server startup.
