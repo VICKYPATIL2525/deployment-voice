@@ -287,7 +287,7 @@ def preprocess(raw_features: dict) -> np.ndarray:
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
-@app.get("/")
+@app.get("/", dependencies=[Security(verify_api_key)])
 def root():
     """
     Service info endpoint — returns a summary of the running model.
@@ -303,7 +303,7 @@ def root():
     }
 
 
-@app.get("/health")
+@app.get("/health", dependencies=[Security(verify_api_key)])
 def health():
     """
     Health check endpoint — confirms all artifacts are loaded and server is ready.
@@ -313,8 +313,8 @@ def health():
     return {"status": "ok", "artifacts_loaded": expected_keys.issubset(artifacts.keys())}
 
 
-@app.post("/predict", response_model=PredictResponse)
-def predict(request: PredictRequest, _: None = Security(verify_api_key)):
+@app.post("/predict", response_model=PredictResponse, dependencies=[Security(verify_api_key)])
+def predict(request: PredictRequest):
     """
     Main prediction endpoint.
 
@@ -365,8 +365,8 @@ def predict(request: PredictRequest, _: None = Security(verify_api_key)):
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
 
 
-@app.get("/model/info")
-def model_info(_: None = Security(verify_api_key)):
+@app.get("/model/info", dependencies=[Security(verify_api_key)])
+def model_info():
     """
     Full model metadata endpoint — returns everything saved about the trained model.
     Includes hyperparameters, CV score, test-set metrics, and the full list of

@@ -29,6 +29,8 @@ The API expects features that have already been extracted upstream, for example 
 API_KEY=your-secret-key
 ```
 
+You can copy `.env.example` to `.env` and then set your key.
+
 ## Run Locally
 
 Install dependencies and start the API:
@@ -58,14 +60,20 @@ The API is exposed on port `9100`.
 
 ## API Surface
 
-- `GET /`: basic service metadata
-- `GET /health`: readiness check
+- `GET /`: basic service metadata, requires `X-API-Key`
+- `GET /health`: readiness check, requires `X-API-Key`
 - `POST /predict`: prediction endpoint, requires `X-API-Key`
 - `GET /model/info`: full model metadata, requires `X-API-Key`
 
 ## Endpoint Details
 
 ### `GET /`
+
+Requires header:
+
+```http
+X-API-Key: your-secret-key
+```
 
 Returns basic runtime metadata for the deployed service.
 
@@ -82,6 +90,12 @@ Example response:
 ```
 
 ### `GET /health`
+
+Requires header:
+
+```http
+X-API-Key: your-secret-key
+```
 
 Returns service readiness and whether model artifacts were loaded successfully.
 
