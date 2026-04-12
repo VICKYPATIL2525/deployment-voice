@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application files
 COPY api_voice_to_sentiment.py .
 COPY pipeline_output/ pipeline_output/
+COPY demo-api-input-data-sample/ demo-api-input-data-sample/
 
 EXPOSE 9100
 
