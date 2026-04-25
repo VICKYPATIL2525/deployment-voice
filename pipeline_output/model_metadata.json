@@ -1,0 +1,401 @@
+{
+  "pipeline_version": "voice-pca-pipeline-guided-v2",
+  "created_at": "2026-04-25T14:23:58.928173",
+  "saved_at": "25-04-2026 14:23:58",
+  "task_type": "classification",
+  "target_column": "label",
+  "best_model_name": "ExtraTrees",
+  "best_model_params": {
+    "n_estimators": 400,
+    "max_depth": 26,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt"
+  },
+  "cv_score": 0.9873256257842072,
+  "cv_scoring": "f1_macro",
+  "cv_summary": {
+    "successful_models": [
+      "RandomForest",
+      "ExtraTrees",
+      "LightGBM",
+      "HistGradBoost",
+      "XGBoost",
+      "LogisticRegression",
+      "SVM_RBF",
+      "KNN"
+    ],
+    "failed_models": {}
+  },
+  "test_metrics": {
+    "accuracy": 0.99265,
+    "balanced_accuracy": 0.9927,
+    "f1_macro": 0.99267,
+    "f1_weighted": 0.99264,
+    "precision_macro": 0.99278,
+    "recall_macro": 0.9927,
+    "precision_weighted": 0.99276,
+    "recall_weighted": 0.99265,
+    "fit_time_s": 0.94,
+    "confusion_matrix": [
+      [
+        160,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        159,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        154,
+        5,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        1,
+        158,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        155,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        160
+      ]
+    ],
+    "classification_report": {
+      "Anxiety": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 160.0
+      },
+      "Bipolar": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 159.0
+      },
+      "Depression": {
+        "precision": 0.9935483870967742,
+        "recall": 0.9625,
+        "f1-score": 0.9777777777777777,
+        "support": 160.0
+      },
+      "Normal": {
+        "precision": 0.9693251533742331,
+        "recall": 0.9937106918238994,
+        "f1-score": 0.9813664596273292,
+        "support": 159.0
+      },
+      "Stress": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 155.0
+      },
+      "Suicidal": {
+        "precision": 0.9937888198757764,
+        "recall": 1.0,
+        "f1-score": 0.9968847352024922,
+        "support": 160.0
+      },
+      "accuracy": 0.9926547743966422,
+      "macro avg": {
+        "precision": 0.9927770600577973,
+        "recall": 0.9927017819706498,
+        "f1-score": 0.9926714954346,
+        "support": 953.0
+      },
+      "weighted avg": {
+        "precision": 0.9927561936013758,
+        "recall": 0.9926547743966422,
+        "f1-score": 0.9926372184234927,
+        "support": 953.0
+      }
+    }
+  },
+  "all_model_results": {
+    "LightGBM": {
+      "accuracy": 0.99056,
+      "balanced_accuracy": 0.99058,
+      "f1_macro": 0.99052,
+      "f1_weighted": 0.99051,
+      "precision_macro": 0.99063,
+      "recall_macro": 0.99058,
+      "precision_weighted": 0.99063,
+      "recall_weighted": 0.99056,
+      "fit_time_s": 4.36,
+      "confusion_matrix": [
+        [
+          160,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          159,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          153,
+          4,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          158,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          154,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          160
+        ]
+      ],
+      "classification_report": {
+        "Anxiety": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 160.0
+        },
+        "Bipolar": {
+          "precision": 0.99375,
+          "recall": 1.0,
+          "f1-score": 0.9968652037617555,
+          "support": 159.0
+        },
+        "Depression": {
+          "precision": 0.9935064935064936,
+          "recall": 0.95625,
+          "f1-score": 0.9745222929936306,
+          "support": 160.0
+        },
+        "Normal": {
+          "precision": 0.9753086419753086,
+          "recall": 0.9937106918238994,
+          "f1-score": 0.9844236760124611,
+          "support": 159.0
+        },
+        "Stress": {
+          "precision": 0.9935483870967742,
+          "recall": 0.9935483870967742,
+          "f1-score": 0.9935483870967742,
+          "support": 155.0
+        },
+        "Suicidal": {
+          "precision": 0.9876543209876543,
+          "recall": 1.0,
+          "f1-score": 0.9937888198757764,
+          "support": 160.0
+        },
+        "accuracy": 0.9905561385099685,
+        "macro avg": {
+          "precision": 0.9906279739277051,
+          "recall": 0.9905848464867789,
+          "f1-score": 0.990524729956733,
+          "support": 953.0
+        },
+        "weighted avg": {
+          "precision": 0.9906254505699242,
+          "recall": 0.9905561385099685,
+          "f1-score": 0.9905086148407194,
+          "support": 953.0
+        }
+      }
+    },
+    "ExtraTrees": {
+      "accuracy": 0.99265,
+      "balanced_accuracy": 0.9927,
+      "f1_macro": 0.99267,
+      "f1_weighted": 0.99264,
+      "precision_macro": 0.99278,
+      "recall_macro": 0.9927,
+      "precision_weighted": 0.99276,
+      "recall_weighted": 0.99265,
+      "fit_time_s": 0.94,
+      "confusion_matrix": [
+        [
+          160,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          159,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          154,
+          5,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          1,
+          158,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          155,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          160
+        ]
+      ],
+      "classification_report": {
+        "Anxiety": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 160.0
+        },
+        "Bipolar": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 159.0
+        },
+        "Depression": {
+          "precision": 0.9935483870967742,
+          "recall": 0.9625,
+          "f1-score": 0.9777777777777777,
+          "support": 160.0
+        },
+        "Normal": {
+          "precision": 0.9693251533742331,
+          "recall": 0.9937106918238994,
+          "f1-score": 0.9813664596273292,
+          "support": 159.0
+        },
+        "Stress": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 155.0
+        },
+        "Suicidal": {
+          "precision": 0.9937888198757764,
+          "recall": 1.0,
+          "f1-score": 0.9968847352024922,
+          "support": 160.0
+        },
+        "accuracy": 0.9926547743966422,
+        "macro avg": {
+          "precision": 0.9927770600577973,
+          "recall": 0.9927017819706498,
+          "f1-score": 0.9926714954346,
+          "support": 953.0
+        },
+        "weighted avg": {
+          "precision": 0.9927561936013758,
+          "recall": 0.9926547743966422,
+          "f1-score": 0.9926372184234927,
+          "support": 953.0
+        }
+      }
+    }
+  },
+  "class_names": [
+    "Anxiety",
+    "Bipolar",
+    "Depression",
+    "Normal",
+    "Stress",
+    "Suicidal"
+  ],
+  "n_classes": 6,
+  "n_features": 13,
+  "n_features_selected": 13,
+  "feature_names": [
+    "PC1",
+    "PC2",
+    "PC3",
+    "PC4",
+    "PC5",
+    "PC6",
+    "PC7",
+    "PC8",
+    "PC9",
+    "PC10",
+    "PC11",
+    "PC12",
+    "PC13"
+  ],
+  "hardware": {
+    "n_cores": 8,
+    "n_jobs": 7,
+    "gpu_available": true,
+    "gpu_type": "cuda"
+  },
+  "imbalance_strategy": "none"
+}
