@@ -1,2 +1,11 @@
-# Local secrets
+# Environment
 .env
+
+# Runtime logs and test output
+logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+

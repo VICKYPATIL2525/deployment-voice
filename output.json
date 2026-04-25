@@ -1,0 +1,37 @@
+{
+  "GET /": {
+    "service": "Mindspace Mental Health Classifier — Voice",
+    "status": "running",
+    "classes": ["anxiety", "bipolar", "depression", "normal", "stress", "suicidal"],
+    "n_features": 1351
+  },
+
+  "GET /health": {
+    "status": "ok",
+    "model": "XGBoost",
+    "artifacts_loaded": 7
+  },
+
+  "POST /predict": {
+    "prediction_id": "17e7f3bf-41e8-4fe8-b75c-b6f349c7c1b4",
+    "prediction": "normal",
+    "confidence": 0.9922,
+    "probabilities": {
+      "anxiety": 0.0004,
+      "bipolar": 0.0056,
+      "depression": 0.0004,
+      "normal": 0.9922,
+      "stress": 0.0012,
+      "suicidal": 0.0001
+    },
+    "model_name": "XGBoost"
+  },
+
+  "GET /model/info": {
+    "model": "XGBoost",
+    "n_features": 1351,
+    "feature_names": "[... 1351 features ...]",
+    "classes": ["anxiety", "bipolar", "depression", "normal", "stress", "suicidal"],
+    "scaler": "RobustScaler"
+  }
+}

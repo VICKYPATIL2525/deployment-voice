@@ -1,217 +1,112 @@
-# Deployment Voice API
+# Mindspace — Voice Sentiment API
 
-FastAPI inference service for the Mindspace voice-based mental health classifier. The service loads a trained XGBoost pipeline at startup and exposes HTTP endpoints for health checks, model metadata, and predictions from pre-extracted acoustic features.
+A FastAPI inference server that predicts a mental health profile from 1,351 pre-extracted acoustic voice features using a trained XGBoost model.
 
-## What This Repo Contains
+## What it does
 
-- `api_voice_to_sentiment.py`: FastAPI app and inference pipeline.
-- `call_api.py`: Python client script to test all API endpoints.
-- `pipeline_output/XGBoost_27032026_152209/`: trained model and preprocessing artifacts.
-- `demo-api-input-data-sample/voice_normal_sample_1.json`: sample request payload.
-- `.env`: API key configuration (not committed to git).
-- `.env.example`: template for `.env` — copy and set your key.
-- `.gitignore`: prevents `.env` from being committed.
-- `Dockerfile`: container image definition.
-- `docker-compose.yml`: local container orchestration.
-- `requirements.txt`: pinned Python dependencies.
+Accepts 1,351 OpenSMILE acoustic features extracted from a speech/audio sample and returns the most likely mental health profile out of 6 classes: `anxiety`, `bipolar`, `depression`, `normal`, `stress`, `suicidal`.
 
-## Model Summary
+## Endpoints
 
-- Model: XGBoost
-- Task: 6-class classification
-- Classes: `anxiety`, `bipolar`, `depression`, `normal`, `stress`, `suicidal`
-- Input size: 1,351 acoustic features
-- Reported test accuracy: `0.6033`
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/` | No | Service info — name, supported classes, feature count |
+| GET | `/health` | No | Health check — returns `{"status": "ok"}` when ready |
+| POST | `/predict` | Yes | Run prediction on 1,351 acoustic features |
+| GET | `/model/info` | Yes | Model structure info (feature names, classes, scaler) |
 
-The API expects features that have already been extracted upstream, for example from an OpenSMILE-based pipeline. This repo does not perform raw audio feature extraction.
+## Input format
 
-## Requirements
+The `/predict` endpoint expects a JSON object with a single `"features"` key containing all 1,351 acoustic feature names as a flat dict:
 
-- Python 3.11 if running locally
-- A `.env` file in the project root containing:
-
-```env
-API_KEY=your-secret-key
+```json
+{
+  "features": {
+    "pcm_fftMag_fband250-650_sma_de_pctlrange0-1": 6.524812,
+    "mfcc_sma_de[11]_meanPeakDist": 0.229548,
+    "...": "... (all 1,351 features required)"
+  }
+}
 ```
 
-You can copy `.env.example` to `.env` and then set your key.
+The full list of feature names is available at `GET /model/info` under `"feature_names"`. See `payload.json` for a complete sample input.
 
-## Run Locally
+## How to use
 
-Install dependencies and start the API:
+### Prerequisites
 
-```powershell
-pip install -r requirements.txt
-uvicorn api_voice_to_sentiment:app --host 0.0.0.0 --port 9100 --reload
+```
+pip install requests python-dotenv
 ```
 
-Docs will be available at `http://localhost:9100/docs`.
+### Call with Python `requests`
 
-## Run With Docker
+```python
+import requests
 
-Build and run with Compose:
+url = "http://<host>:9100/predict"
 
-```powershell
+payload = {
+    "features": {
+        "pcm_fftMag_fband250-650_sma_de_pctlrange0-1": 6.524812,
+        "mfcc_sma_de[11]_meanPeakDist": 0.229548
+        # ... all 1,351 features
+    }
+}
+
+headers = {
+    "X-API-Key": "your_api_key"
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+```
+
+### Ready-to-run script
+
+```bash
+python test_predict_api.py
+```
+
+`test_predict_api.py` reads `payload.json`, calls `/predict`, and prints the result. Requires `.env` with `MINDSPACE_VOICE_API_KEY` set.
+
+## Setup
+
+### 1. Configure environment
+
+```bash
+cp example.env .env
+# Edit .env and set MINDSPACE_VOICE_API_KEY to your key
+```
+
+### 2. Run with Docker (recommended)
+
+```bash
 docker compose up --build
 ```
 
-Stop the service:
+### 3. Run locally
 
-```powershell
-docker compose down
+```bash
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 9100
 ```
 
-The API is exposed on port `9100`.
+Interactive docs available at `http://localhost:9100/docs`.
 
-## API Surface
-
-- `GET /`: basic service metadata, requires `X-API-Key`
-- `GET /health`: readiness check, requires `X-API-Key`
-- `POST /predict`: prediction endpoint, requires `X-API-Key`
-- `GET /model/info`: full model metadata, requires `X-API-Key`
-
-## Endpoint Details
-
-### `GET /`
-
-Requires header:
-
-```http
-X-API-Key: your-secret-key
-```
-
-Returns basic runtime metadata for the deployed service.
-
-Example response:
-
-```json
-{
-  "service": "Mindspace Mental Health Classifier — Voice",
-  "model": "XGBoost",
-  "accuracy": 0.6033,
-  "classes": ["anxiety", "bipolar", "depression", "normal", "stress", "suicidal"],
-  "n_features": 1351
-}
-```
-
-### `GET /health`
-
-Requires header:
-
-```http
-X-API-Key: your-secret-key
-```
-
-Returns service readiness and whether model artifacts were loaded successfully.
-
-Example response:
-
-```json
-{
-  "status": "ok",
-  "artifacts_loaded": true
-}
-```
-
-### `POST /predict`
-
-Requires header:
-
-```http
-X-API-Key: your-secret-key
-```
-
-Request body:
-
-```json
-{
-  "features": {
-    "feature_name_1": 0.123,
-    "feature_name_2": -0.456
-  }
-}
-```
-
-Response body:
-
-```json
-{
-  "prediction": "normal",
-  "confidence": 0.8123,
-  "probabilities": {
-    "anxiety": 0.0312,
-    "bipolar": 0.0441,
-    "depression": 0.0527,
-    "normal": 0.8123,
-    "stress": 0.0419,
-    "suicidal": 0.0178
-  },
-  "model": "XGBoost",
-  "accuracy": 0.6033
-}
-```
-
-### `GET /model/info`
-
-Requires the same `X-API-Key` header. Returns model metadata loaded from the saved training artifacts, including:
-
-- model name
-- tuned hyperparameters
-- cross-validation score
-- test metrics
-- class names
-- required feature names
-
-## Request Format
-
-`POST /predict` expects a JSON body shaped like:
-
-```json
-{
-  "features": {
-    "feature_name_1": 0.123,
-    "feature_name_2": -0.456
-  }
-}
-```
-
-All 1,351 required feature names must be present. The easiest way to test the API is to reuse the sample payload in `demo-api-input-data-sample/voice_normal_sample_1.json`.
-
-Example request:
-
-```powershell
-curl -X POST http://localhost:9100/predict ^
-  -H "Content-Type: application/json" ^
-  -H "X-API-Key: your-secret-key" ^
-  --data @demo-api-input-data-sample/voice_normal_sample_1.json
-```
-
-## Testing With the Python Client
-
-`call_api.py` is a standalone script that calls all 4 endpoints and prints the results. It reads the API key from `.env` automatically.
-
-```powershell
-# Make sure the server is running first
-uvicorn api_voice_to_sentiment:app --port 9100 --reload
-
-# In another terminal, run the client
-python call_api.py
-```
-
-Expected output:
+## File structure
 
 ```
-1. GET /  (Service Info)           → 200
-2. GET /health  (Health Check)     → 200, artifacts_loaded=True
-3. GET /model/info  (Model Meta)   → 200, XGBoost, 1351 features
-4. POST /predict  (Prediction)     → 200, prediction=normal, confidence=0.9922
+deployment-voice/
+├── main.py                    # FastAPI application
+├── requirements.txt           # Python dependencies
+├── Dockerfile                 # Docker image definition
+├── docker-compose.yml         # Single-service compose file
+├── payload.json               # Sample input for /predict (1,351 features)
+├── output.json                # Sample output from /predict
+├── test_predict_api.py        # Ready-to-run test script
+├── example.env                # Environment variable template
+├── .env                       # Your actual keys (never commit this)
+├── demo-api-input-data-sample/ # Sample input files per class
+└── pipeline_output/           # Trained model artifacts
 ```
-
-## Notes For Developers
-
-- Artifacts are loaded once at startup through the FastAPI lifespan hook.
-- Preprocessing includes saved outlier transforms and a saved scaler before inference.
-- CORS is currently open to all origins and should be tightened for production deployment.
-- The sample payload is also injected into the Swagger schema when available.
-- All endpoints require the `X-API-Key` header — requests without it receive `403 Forbidden`.
-- The API key is loaded from the `.env` file via `python-dotenv` at server startup.
