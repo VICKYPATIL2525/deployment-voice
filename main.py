@@ -35,7 +35,7 @@ def verify_api_key(key: str = Security(_api_key_header)) -> None:
 
 
 # ─── Artifact paths ───────────────────────────────────────────────────────────
-ARTIFACTS_DIR = Path(__file__).parent / "pipeline_output" / "XGBoost_27032026_152209"
+ARTIFACTS_DIR = Path(__file__).parent / "pipeline_output"
 
 artifacts: dict = {}
 
@@ -155,8 +155,10 @@ def apply_outlier_transforms(df: pd.DataFrame) -> pd.DataFrame:
             continue
         strategy = info["strategy"]
 
-        if strategy == "yeo-johnson":
-            pt = info["fitted_pt"]
+        if strategy == "none":
+            pass
+        elif strategy == "yeo-johnson":
+            pt = info.get("transformer") or info.get("fitted_pt")
             df[col] = pt.transform(df[[col]].values).ravel()
         elif strategy == "sqrt":
             df[col] = np.sqrt(df[col].clip(lower=0))
